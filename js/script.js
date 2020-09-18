@@ -98,7 +98,7 @@ window.addEventListener('DOMContentLoaded', () => {
         modalCloseBtn = document.querySelector('[data-close]');
 
     //console.log(modalTrigger);
-    // const modalTimerId = setTimeout(openModal, 3000); TO DO
+     const modalTimerId = setTimeout(openModal, 3000); //TO DO
 
 
     modalTrigger.forEach(btn => {
@@ -169,16 +169,16 @@ window.addEventListener('DOMContentLoaded', () => {
             //     this.classes[0] = 'menu__item';
             // }
             // this.classes.forEach(className => element.classList.add(className));
-            
+
             if (this.classes.length === 0) {
                 this.classes = "menu__item";
                 element.classList.add(this.classes);
             } else {
                 this.classes.forEach(className => element.classList.add(className));
             }
-            
 
-            
+
+
             element.innerHTML = `
                 
                     <img src=${this.src} alt=${this.alt}>
@@ -191,22 +191,64 @@ window.addEventListener('DOMContentLoaded', () => {
                 </div>
                 
                 `;
-            console.log(this.parent);
+            //console.log(this.parent);
             this.parent.append(element);
         }
     }
 
-   const vasea =  new MenuCard(
+    const vasea = new MenuCard(
         "img/tabs/vegy.jpg",
         "vegy",
         'Меню "Фитнес"',
         'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
         9,
         '.menu .container',
-       
+
     );
-    console.log(vasea);
+    //console.log(vasea);
     vasea.render();
 
+    //Forms
 
+    const forms = document.querySelectorAll('form');
+
+    const message = {
+        loading: 'Loading',
+        success: 'Thx, we will call you',
+        failure: 'something wrong'
+    };
+
+    forms.forEach(item =>{
+        postData(item);
+    });
+
+    function postData(form) {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const statusMessage = document.createElement('div');
+            statusMessage.classList.add('status');
+            statusMessage.textContent = message.loading;
+            form.append(statusMessage);
+
+            const request = new XMLHttpRequest();
+            request.open('POST', 'server.php');
+
+            request.setRequestHeader('Content-type', 'multipart/form-data');
+            const formData = new FormData(form);
+
+            request.send(formData);
+
+
+            request.addEventListener('laod', () => {
+                if(request.status === 200){
+                    console.log(request.response);
+                    statusMessage.textContent = message.success;
+                } else{
+                    statusMessage.textContent = message.failure;
+                }
+            });
+
+        });
+    }
 });
